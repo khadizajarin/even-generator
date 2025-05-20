@@ -1,19 +1,25 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Go to /generate?n=10 to get even numbers"
+    return '''
+        <h2>Generate Even Numbers</h2>
+        <form action="/generate" method="get">
+            Enter a number: <input type="text" name="n">
+            <input type="submit" value="Generate">
+        </form>
+    '''
 
 @app.route('/generate')
-def generate_even_numbers():
+def generate_even():
     try:
-        n = int(request.args.get('n', 10))
-        evens = [i for i in range(2, 2 * n + 1, 2)]
-        return jsonify(evens)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        n = int(request.args.get('n', 0))
+        evens = [str(i * 2) for i in range(n)]
+        return f"<h3>First {n} even numbers:</h3><p>{', '.join(evens)}</p>"
+    except ValueError:
+        return "Please enter a valid integer."
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=8080)
